@@ -62,13 +62,14 @@ const CreateNewNoHistory = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const id = props.addNew({
+    props.addNew({
       content,
       author,
       info,
       votes: 0,
     });
-    props.history.push(`/anecdotes/${id}`);
+    props.history.push('/');
+    props.setNotification(`a new anecdote ${content} created!`);
   };
 
   return (
@@ -127,7 +128,6 @@ const App = () => {
     const newAnecdote = { ...anecdote };
     newAnecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(newAnecdote));
-    return newAnecdote.id;
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -148,11 +148,12 @@ const App = () => {
       <h1>Software anecdotes</h1>
       <Router>
         <Menu />
+        {notification}
         <Route exact path="/anecdotes/:id" render={({ match }) => ( // eslint-disable-line react/jsx-first-prop-new-line, react/jsx-max-props-per-line
           <Anecdote anecdote={anecdotes.find((anecdote) => anecdote.id === match.params.id)} />)}
         />
         <Route exact path="/" render={() => <AnecdoteList anecdotes={anecdotes} />} />
-        <Route exact path="/create" render={() => <CreateNew addNew={addNew} />} />
+        <Route exact path="/create" render={() => <CreateNew addNew={addNew} setNotification={setNotification} />} />
         <Route exact path="/about" render={() => <About />} />
       </Router>
       <Footer />
