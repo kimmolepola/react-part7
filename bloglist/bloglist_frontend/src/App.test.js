@@ -1,15 +1,17 @@
 import React from 'react';
 import { render, waitForElement } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import App from './App';
+import store from './store';
 
 jest.mock('./services/blogs');
 
 describe('<App />', () => {
   test('if no user logged, blogs are not rendered', async () => {
     const component = render(
-      <App />,
+      <Provider store={store}><App /></Provider>,
     );
-    component.rerender(<App />);
+    component.rerender(<Provider store={store}><App /></Provider>);
 
     await waitForElement(
       () => component.getByText('Log in to application'),
@@ -35,9 +37,9 @@ describe('<App />', () => {
     localStorage.setItem('loggedBlogappUser', JSON.stringify(user));
 
     const component = render(
-      <App />,
+      <Provider store={store}><App /></Provider>,
     );
-    component.rerender(<App />);
+    component.rerender(<Provider store={store}><App /></Provider>);
 
     await waitForElement(
       () => component.getByText('blogs'),

@@ -7,11 +7,12 @@ import NewBlogForm from './components/NewBlogForm';
 import Blog from './components/Blog';
 import './App.css';
 import { useField } from './hooks';
-import { setNewBlogs } from './reducers/blogReducer';
+import { setBlogs } from './reducers/blogReducer';
+import { setNotification } from './reducers/notificationReducer';
 
-const App = (props) => {
-  const [blogs, setBlogs] = useState([]);
-  const [notification, setNotification] = useState(null);
+/* eslint-disable react/prop-types */
+const App = ({ blogs, notification, ...props }) => {
+  // const [notification, setNotification] = useState(null);
   const [user, setUser] = useState(null);
   const { reset: usernamereset, ...username } = useField('text', 'Username');
   const { reset: passwordreset, ...password } = useField('password', 'Password');
@@ -19,7 +20,7 @@ const App = (props) => {
   useEffect(() => {
     blogService
       .getAll().then((initialBlogs) => {
-        setBlogs(initialBlogs);
+        props.setBlogs(initialBlogs);
       });
   }, []);
 
@@ -32,10 +33,10 @@ const App = (props) => {
     }
   }, []);
 
-  const notify = (message, className) => {
-    setNotification({ message, className });
+  const notify = (message, msgClass) => {
+    props.setNotification(message, msgClass);
     setTimeout(() => {
-      setNotification(null);
+      props.setNotification(null);
     }, 5000);
   };
 
@@ -43,13 +44,13 @@ const App = (props) => {
     if (window.confirm(`remove blog ${title} by ${author}`)) { // eslint-disable-line no-alert
       const response = await blogService.remove(id);
       if (response.status === 204) {
-        const newBlogs = blogs.reduce((result, x) => {
+        const newStateBlogs = props.blogs.reduce((result, x) => {
           if (x.id !== id) {
             result.push(x);
           }
           return result;
         }, []);
-        setBlogs(newBlogs);
+        props.setBlogs(newStateBlogs);
       } else {
         notify('failed', 'error');
       }
@@ -58,7 +59,7 @@ const App = (props) => {
 
   const handleBlogUpdate = async (content) => {
     const response = await blogService.put(content);
-    const newBlogs = blogs.map((blg) => {
+    const newStateBlogs = props.blogs.map((blg) => {
       if (blg.id === response.id) {
         const fullContent = { ...response };
         fullContent.user = blg.user;
@@ -66,7 +67,7 @@ const App = (props) => {
       }
       return blg;
     });
-    setBlogs(newBlogs);
+    props.setNewBlogs(newStateBlogs);
   };
 
   const handleLogout = () => {
@@ -92,6 +93,8 @@ const App = (props) => {
     }
   };
 
+  console.log('noti-------------', notification);
+
   const blogForm = () => (
     <div>
       <h2>blogs</h2>
@@ -99,8 +102,8 @@ const App = (props) => {
       <p>{user.name} logged in
         <button onClick={handleLogout} type="button">logout</button>
       </p>
-      <NewBlogForm user={user} blogs={blogs} setBlogs={setBlogs} notify={notify} />
-      {blogs.sort((a, b) => a.likes - b.likes).map((blog) => (
+      <NewBlogForm user={user} blogs={blogs} notify={notify} />
+      {blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
@@ -140,4 +143,14 @@ const App = (props) => {
   );
 };
 
-export default connect(null, { setNewBlogs })(App);
+const dispatchToProps = {
+  setBlogs,
+  setNotification,
+};
+
+const stateToProps = (state) => ({
+  blogs: state.blogs,
+  notification: state.notification,
+});
+
+export default connect(stateToProps, dispatchToProps)(App);

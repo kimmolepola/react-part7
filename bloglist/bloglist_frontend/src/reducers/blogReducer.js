@@ -1,4 +1,4 @@
-export const setNewBlogs = (blogs) => (dispatch) => {
+export const setBlogs = (blogs) => (dispatch) => {
   dispatch({
     type: 'SET_BLOGS',
     data: blogs,

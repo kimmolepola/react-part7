@@ -1,11 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 import { useField } from '../hooks';
+import { setBlogs } from '../reducers/blogReducer';
 
 /* eslint-disable react/prop-types */
 const NewBlogForm = ({
-  user, blogs, setBlogs, notify,
+  user, blogs, notify, ...props
 }) => {
   const { reset: urlreset, ...url } = useField('text', 'Url');
   const { reset: authorreset, ...author } = useField('text', 'Author');
@@ -22,7 +24,7 @@ const NewBlogForm = ({
       });
       const rsp = { ...response };
       rsp.user = { id: response.user, ...user };
-      setBlogs(blogs.concat(rsp));
+      props.setBlogs(blogs.concat(rsp));
       urlreset();
       authorreset();
       titlereset();
@@ -60,4 +62,4 @@ const NewBlogForm = ({
 };
 /* eslint-enable react/jsx-props-no-spreading, react/prop-types */
 
-export default NewBlogForm;
+export default connect(null, { setBlogs })(NewBlogForm);

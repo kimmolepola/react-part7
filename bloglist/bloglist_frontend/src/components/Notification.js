@@ -5,8 +5,9 @@ const Notification = ({ notification }) => {
   if (notification === null) {
     return null;
   }
+  console.log('nottt-----', notification);
   return (
-    <div className={notification.className}>
+    <div className={notification.msgClass}>
       {notification.message}
     </div>
   );
