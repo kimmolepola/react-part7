@@ -24,6 +24,9 @@ blogsRouter.delete('/:id', async (request, response, next) => {
     const blog = await Blog.findById(request.params.id);
     if (decodedToken.id === blog.user.toString()) {
       await Blog.findByIdAndDelete(request.params.id);
+      const user = await User.findById(decodedToken.id);
+      user.blogs = user.blogs.filter((x) => x.toString() !== request.params.id.toString());
+      await User.findByIdAndUpdate(user.id, user, { new: true, runValidators: true, context: 'query' });
       response.status(204).end();
     } else {
       response.status(403).json({ error: 'forbidden' });

@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import {
+  BrowserRouter as Router, Route, Link, Redirect, withRouter,
+} from 'react-router-dom';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Notification from './components/Notification';
@@ -7,72 +10,48 @@ import NewBlogForm from './components/NewBlogForm';
 import Blog from './components/Blog';
 import './App.css';
 import { useField } from './hooks';
-import { setBlogs } from './reducers/blogReducer';
-import { setNotification } from './reducers/notificationReducer';
+import {
+  deleteBlog, updateBlog, initializeBlogs,
+} from './reducers/blogsReducer';
+import { notify } from './reducers/notificationReducer';
+import { setUser } from './reducers/userReducer';
+import Users from './components/Users';
+import { initializeUsers } from './reducers/usersReducer';
 
 /* eslint-disable react/prop-types */
-const App = ({ blogs, notification, ...props }) => {
-  // const [notification, setNotification] = useState(null);
-  const [user, setUser] = useState(null);
+const App = ({
+  blogs, user, notif, setUsr, deleteBlg, updateBlg, initBlogs, initUsers,
+}) => {
   const { reset: usernamereset, ...username } = useField('text', 'Username');
   const { reset: passwordreset, ...password } = useField('password', 'Password');
 
-  useEffect(() => {
-    blogService
-      .getAll().then((initialBlogs) => {
-        props.setBlogs(initialBlogs);
-      });
-  }, []);
+  useEffect(() => { initBlogs(); }, [initBlogs]);
+  useEffect(() => { initUsers(); }, [initUsers]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
     if (loggedUserJSON) {
       const usr = JSON.parse(loggedUserJSON);
-      setUser(usr);
+      setUsr(usr);
       blogService.setConfig(usr.token);
     }
-  }, []);
-
-  const notify = (message, msgClass) => {
-    props.setNotification(message, msgClass);
-    setTimeout(() => {
-      props.setNotification(null);
-    }, 5000);
-  };
+  }, [setUsr]);
 
   const handleBlogDelete = async (id, title, author) => {
     if (window.confirm(`remove blog ${title} by ${author}`)) { // eslint-disable-line no-alert
-      const response = await blogService.remove(id);
-      if (response.status === 204) {
-        const newStateBlogs = props.blogs.reduce((result, x) => {
-          if (x.id !== id) {
-            result.push(x);
-          }
-          return result;
-        }, []);
-        props.setBlogs(newStateBlogs);
-      } else {
-        notify('failed', 'error');
+      if (!await deleteBlg(id)) {
+        notif('failed to delete', 'error');
       }
     }
   };
 
-  const handleBlogUpdate = async (content) => {
-    const response = await blogService.put(content);
-    const newStateBlogs = props.blogs.map((blg) => {
-      if (blg.id === response.id) {
-        const fullContent = { ...response };
-        fullContent.user = blg.user;
-        return fullContent;
-      }
-      return blg;
-    });
-    props.setNewBlogs(newStateBlogs);
+  const handleBlogUpdate = (content) => {
+    updateBlg(content);
   };
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser');
-    setUser(null);
+    setUsr(null);
   };
 
   const handleLogin = async (event) => {
@@ -85,41 +64,46 @@ const App = ({ blogs, notification, ...props }) => {
         'loggedBlogappUser', JSON.stringify(usr),
       );
       blogService.setConfig(usr.token);
-      setUser(usr);
+      setUsr(usr);
       usernamereset();
       passwordreset();
     } catch (exception) {
-      notify('Wrong username or password', 'error');
+      notif('Wrong username or password', 'error');
     }
   };
 
-  console.log('noti-------------', notification);
+  const Blogs = () => (
+    blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
+      <Blog
+        key={blog.id}
+        blog={blog}
+        handleBlogUpdate={handleBlogUpdate}
+        handleBlogDelete={handleBlogDelete}
+        user={user}
+      />
+    )));
 
-  const blogForm = () => (
+  const AppView = () => (
     <div>
       <h2>blogs</h2>
-      <Notification notification={notification} />
+      <Notification />
       <p>{user.name} logged in
         <button onClick={handleLogout} type="button">logout</button>
       </p>
-      <NewBlogForm user={user} blogs={blogs} notify={notify} />
-      {blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          handleBlogUpdate={handleBlogUpdate}
-          handleBlogDelete={handleBlogDelete}
-          user={user}
-        />
-      ))}
+      <Router>
+        <Route exact path="/" render={() => <NewBlogForm />} />
+        <Route exact path="/" render={() => <Blogs />} />
+        <Route exact path="/users/" render={() => <Users />} />
+      </Router>
     </div>
   );
 
+
   /* eslint-disable react/jsx-props-no-spreading */
-  const loginForm = () => (
+  const LoginForm = () => (
     <div>
       <h2>Log in to application</h2>
-      <Notification notification={notification} />
+      <Notification />
       <form onSubmit={handleLogin}>
         <div>
             username
@@ -134,23 +118,28 @@ const App = ({ blogs, notification, ...props }) => {
     </div>
   );
   /* eslint-enable react/jsx-props-no-spreading */
+  /* eslint-disable react/jsx-first-prop-new-line, react/jsx-max-props-per-line */
 
   return (
     <div>
-      {user === null && loginForm()}
-      {user !== null && blogForm()}
+      {user === null && LoginForm()}
+      {user !== null && AppView()}
     </div>
   );
 };
 
 const dispatchToProps = {
-  setBlogs,
-  setNotification,
+  initBlogs: initializeBlogs,
+  updateBlg: updateBlog,
+  deleteBlg: deleteBlog,
+  notif: notify,
+  setUsr: setUser,
+  initUsers: initializeUsers,
 };
 
 const stateToProps = (state) => ({
   blogs: state.blogs,
-  notification: state.notification,
+  user: state.user,
 });
 
 export default connect(stateToProps, dispatchToProps)(App);

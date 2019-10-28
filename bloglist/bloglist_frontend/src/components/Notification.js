@@ -1,11 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 /* eslint-disable react/prop-types */
 const Notification = ({ notification }) => {
   if (notification === null) {
     return null;
   }
-  console.log('nottt-----', notification);
   return (
     <div className={notification.msgClass}>
       {notification.message}
@@ -14,4 +14,4 @@ const Notification = ({ notification }) => {
 };
 /* eslint-enable react/prop-types */
 
-export default Notification;
+export default connect((state) => ({ notification: state.notification }))(Notification);

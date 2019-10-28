@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 import { useField } from '../hooks';
-import { setBlogs } from '../reducers/blogReducer';
+import { setBlogs } from '../reducers/blogsReducer';
+import { notify } from '../reducers/notificationReducer';
 
 /* eslint-disable react/prop-types */
 const NewBlogForm = ({
-  user, blogs, notify, ...props
+  user, blogs, notif, setBlgs,
 }) => {
   const { reset: urlreset, ...url } = useField('text', 'Url');
   const { reset: authorreset, ...author } = useField('text', 'Author');
@@ -24,13 +25,13 @@ const NewBlogForm = ({
       });
       const rsp = { ...response };
       rsp.user = { id: response.user, ...user };
-      props.setBlogs(blogs.concat(rsp));
+      setBlgs(blogs.concat(rsp));
       urlreset();
       authorreset();
       titlereset();
-      notify(`a new blog ${title.value} by ${author.value} added`, 'success');
+      notif(`a new blog ${title.value} by ${author.value} added`, 'success');
     } catch (exception) {
-      notify('Failed', 'error');
+      notif('Failed', 'error');
     }
   };
   /* eslint-disable react/jsx-props-no-spreading */
@@ -62,4 +63,15 @@ const NewBlogForm = ({
 };
 /* eslint-enable react/jsx-props-no-spreading, react/prop-types */
 
-export default connect(null, { setBlogs })(NewBlogForm);
+const dispatchToProps = {
+  setBlgs: setBlogs,
+  notif: notify,
+};
+
+const stateToProps = (state) => ({
+  user: state.user,
+  blogs: state.blogs,
+});
+
+
+export default connect(stateToProps, dispatchToProps)(NewBlogForm);
