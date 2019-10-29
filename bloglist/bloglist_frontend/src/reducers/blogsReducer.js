@@ -1,5 +1,12 @@
 import blogService from '../services/blogs';
 
+export const addBlog = (blog) => async (dispatch) => {
+  dispatch({
+    type: 'ADD_BLOG',
+    data: blog,
+  });
+};
+
 export const initializeBlogs = () => async (dispatch) => {
   const blogs = await blogService.getAll();
   dispatch({
@@ -37,6 +44,9 @@ export const setBlogs = (blogs) => (dispatch) => {
 
 const reducer = (state = [], action) => {
   switch (action.type) {
+    case 'ADD_BLOG':
+      console.log(action.data);
+      return state.concat(action.data);
     case 'INIT_BLOGS':
       return action.data;
     case 'UPDATE_BLOG':

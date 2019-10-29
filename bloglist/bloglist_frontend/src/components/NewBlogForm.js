@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 import { useField } from '../hooks';
-import { setBlogs } from '../reducers/blogsReducer';
+import { setBlogs, addBlog } from '../reducers/blogsReducer';
 import { notify } from '../reducers/notificationReducer';
+import { addBlogForUser } from '../reducers/usersReducer';
 
 /* eslint-disable react/prop-types */
 const NewBlogForm = ({
-  user, blogs, notif, setBlgs,
+  notif, users, addBlgForUsr, addBlg,
 }) => {
   const { reset: urlreset, ...url } = useField('text', 'Url');
   const { reset: authorreset, ...author } = useField('text', 'Author');
@@ -19,13 +21,16 @@ const NewBlogForm = ({
   const handleCreateNewBlog = async (event) => {
     event.preventDefault();
     noteFormRef.current.toggleVisibility();
+    const quickFixUrl = url.value.substring(0, 4) === 'http' ? url.value : 'http://'.concat(url.value);
+    // try {
+    const response = await blogService.create({
+      title: title.value, author: author.value, url: quickFixUrl,
+    });
     try {
-      const response = await blogService.create({
-        title: title.value, author: author.value, url: url.value,
-      });
       const rsp = { ...response };
-      rsp.user = { id: response.user, ...user };
-      setBlgs(blogs.concat(rsp));
+      rsp.user = _.omit(users.find((x) => x.id.toString() === response.user.toString()), 'blogs');
+      addBlgForUsr(_.omit(rsp, 'user', 'likes'), response.user);
+      addBlg(rsp);
       urlreset();
       authorreset();
       titlereset();
@@ -64,12 +69,14 @@ const NewBlogForm = ({
 /* eslint-enable react/jsx-props-no-spreading, react/prop-types */
 
 const dispatchToProps = {
+  addBlg: addBlog,
+  addBlgForUsr: addBlogForUser,
   setBlgs: setBlogs,
   notif: notify,
 };
 
 const stateToProps = (state) => ({
-  user: state.user,
+  users: state.users,
   blogs: state.blogs,
 });
 

@@ -54,7 +54,7 @@ const Blog = ({
         <a href={blog.url}>{blog.url}</a><br />
         {blog.likes}<button type="button" onClick={() => handleLike()}>like</button> <br />
         added by {blog.user.name}
-        <button style={showWhenSameUser} type="button" onClick={() => handleBlogDelete(blog.id, blog.title, blog.author)}>remove</button>
+        <button style={showWhenSameUser} type="button" onClick={() => handleBlogDelete(blog.id, blog.title, blog.author, blog.user.id)}>remove</button>
       </div>
     </div>
   );
