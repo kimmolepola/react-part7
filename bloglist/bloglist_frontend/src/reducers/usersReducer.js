@@ -12,7 +12,7 @@ export const removeBlogFromUser = (blogId, userId) => async (dispatch) => {
 
 export const addBlogForUser = (blog, userId) => async (dispatch) => {
   dispatch({
-    type: 'ADD_BLOG',
+    type: 'ADD_BLOG_FOR_USER',
     data: {
       blog,
       userId,
@@ -35,7 +35,7 @@ const reducer = (state = [], action) => {
       const newUser = newState.find((x) => x.id.toString() === action.data.userId.toString());
       newUser.blogs = newUser.blogs.filter((x) => x.id.toString() !== action.data.blogId);
       return newState;
-    } case 'ADD_BLOG': {
+    } case 'ADD_BLOG_FOR_USER': {
       const newState = [...state];
       const newUser = newState.find((x) => x.id.toString() === action.data.userId.toString());
       newUser.blogs = newUser.blogs.concat(action.data.blog);

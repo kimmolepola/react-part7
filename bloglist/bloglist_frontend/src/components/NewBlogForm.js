@@ -4,7 +4,7 @@ import _ from 'lodash';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 import { useField } from '../hooks';
-import { setBlogs, addBlog } from '../reducers/blogsReducer';
+import { addBlog } from '../reducers/blogsReducer';
 import { notify } from '../reducers/notificationReducer';
 import { addBlogForUser } from '../reducers/usersReducer';
 
@@ -22,11 +22,10 @@ const NewBlogForm = ({
     event.preventDefault();
     noteFormRef.current.toggleVisibility();
     const quickFixUrl = url.value.substring(0, 4) === 'http' ? url.value : 'http://'.concat(url.value);
-    // try {
-    const response = await blogService.create({
-      title: title.value, author: author.value, url: quickFixUrl,
-    });
     try {
+      const response = await blogService.create({
+        title: title.value, author: author.value, url: quickFixUrl,
+      });
       const rsp = { ...response };
       rsp.user = _.omit(users.find((x) => x.id.toString() === response.user.toString()), 'blogs');
       addBlgForUsr(_.omit(rsp, 'user', 'likes'), response.user);
@@ -68,17 +67,15 @@ const NewBlogForm = ({
 };
 /* eslint-enable react/jsx-props-no-spreading, react/prop-types */
 
-const dispatchToProps = {
+const mapDispatchToProps = {
   addBlg: addBlog,
   addBlgForUsr: addBlogForUser,
-  setBlgs: setBlogs,
   notif: notify,
 };
 
-const stateToProps = (state) => ({
+const mapStateToProps = (state) => ({
   users: state.users,
-  blogs: state.blogs,
 });
 
 
-export default connect(stateToProps, dispatchToProps)(NewBlogForm);
+export default connect(mapStateToProps, mapDispatchToProps)(NewBlogForm);
