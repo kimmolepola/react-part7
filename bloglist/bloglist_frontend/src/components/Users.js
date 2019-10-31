@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 /* eslint-disable react/prop-types */
 const OneUser = ({ user }) => (
@@ -12,7 +13,53 @@ const OneUser = ({ user }) => (
   </div>
 );
 
-const AllUsers = ({ users, history }) => (
+const cellStyle = {
+  display: 'table-cell',
+  paddingRight: '10px',
+};
+
+const AllUsersRow = ({ user }) => (
+  <div style={{ display: 'table-row' }}>
+    <Link style={cellStyle} to={`/users/${user.id}`}>{user.name}</Link>
+    <div style={cellStyle}>{user.blogs.length}</div>
+  </div>
+);
+
+const AllUsers = ({ users }) => (
+  <div>
+    <h1>Users</h1>
+    <div style={{ display: 'table' }}>
+      <div style={{ display: 'table-row' }}>
+        <div style={cellStyle} />
+        <div style={cellStyle}><b>blogs created</b></div>
+      </div>
+      {users === undefined ? null : users.map((x) => <AllUsersRow key={x.id} user={x} />)}
+    </div>
+  </div>
+);
+
+const Users = ({ users, id }) => {
+  if (!id) {
+    return <AllUsers users={users} />;
+  }
+  const user = users.find((x) => id && x.id.toString() === id.toString());
+  if (user) {
+    return <OneUser user={user} />;
+  }
+  return <div>404 Page not found</div>;
+};
+
+export default connect((state) => ({ users: state.users }))(Users);
+
+/*
+const Row = ({ user }) => (
+  <tr>
+    <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
+    <td>{user.blogs.length}</td>
+  </tr>
+);
+
+const AllUsers = ({ users }) => (
   <div>
     <h1>Users</h1>
     <table>
@@ -21,42 +68,9 @@ const AllUsers = ({ users, history }) => (
           <td />
           <th>blogs created</th>
         </tr>
-        {/* eslint-disable-next-line max-len */}
-        {users === undefined ? null : users.map((x) => <Row key={x.id} user={x} history={history} />)}
+        {users === undefined ? null : users.map((x) => <Row key={x.id} user={x} />)}
       </tbody>
     </table>
   </div>
 );
-
-const handleClick = (user, history) => () => {
-  history.push(`/users/${user.id}`);
-};
-
-const linkStyle = {
-  background: 'none!important',
-  border: 'none',
-  padding: '0!important',
-  color: '#069',
-  textDecoration: 'underline',
-  cursor: 'pointer',
-};
-
-const Row = ({ user, history }) => (
-  <tr>
-    {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions, max-len */}
-    <td onKeyDown={handleClick(user, history)} style={linkStyle} onClick={handleClick(user, history)}>{user.name}</td>
-    <td>{user.blogs.length}</td>
-  </tr>
-);
-
-
-const Users = ({ users, id, history }) => {
-  const user = users.find((x) => id && x.id.toString() === id.toString());
-  return (
-    <div>
-      {user ? <OneUser user={user} /> : <AllUsers history={history} users={users} />}
-    </div>
-  );
-};
-
-export default connect((state) => ({ users: state.users }))(Users);
+*/

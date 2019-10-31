@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
-  BrowserRouter as Router, Route, Link, withRouter,
+  BrowserRouter as Router, Route, Link, Switch, withRouter,
 } from 'react-router-dom';
 import blogService from './services/blogs';
 import loginService from './services/login';
@@ -10,17 +10,16 @@ import NewBlogForm from './components/NewBlogForm';
 import Blog from './components/Blog';
 import './App.css';
 import { useField } from './hooks';
-import {
-  deleteBlog, updateBlog, initializeBlogs,
-} from './reducers/blogsReducer';
+import { initializeBlogs } from './reducers/blogsReducer';
 import { notify } from './reducers/notificationReducer';
 import { setUser } from './reducers/userReducer';
 import Users from './components/Users';
-import { initializeUsers, removeBlogFromUser } from './reducers/usersReducer';
+import { initializeUsers } from './reducers/usersReducer';
+import SingleBlogView from './components/SingleBlogView';
 
 /* eslint-disable react/prop-types */
 const App = ({
-  blogs, user, notif, setUsr, deleteBlg, updateBlg, initBlogs, initUsers, rmvBlgFromUsr,
+  blogs, user, notif, setUsr, initBlogs, initUsers,
 }) => {
   const { reset: usernamereset, ...username } = useField('text', 'Username');
   const { reset: passwordreset, ...password } = useField('password', 'Password');
@@ -36,20 +35,6 @@ const App = ({
       blogService.setConfig(usr.token);
     }
   }, [setUsr]);
-
-  const handleBlogDelete = async (id, title, author, blogUserId) => {
-    if (window.confirm(`remove blog ${title} by ${author}`)) { // eslint-disable-line no-alert
-      if (await deleteBlg(id)) {
-        rmvBlgFromUsr(id, blogUserId);
-      } else {
-        notif('failed to delete', 'error');
-      }
-    }
-  };
-
-  const handleBlogUpdate = (content) => {
-    updateBlg(content);
-  };
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser');
@@ -79,9 +64,6 @@ const App = ({
       <Blog
         key={blog.id}
         blog={blog}
-        handleBlogUpdate={handleBlogUpdate}
-        handleBlogDelete={handleBlogDelete}
-        user={user}
       />
     )));
 
@@ -89,7 +71,8 @@ const App = ({
     padding: 5,
   };
 
-  const UsersYesHistory = withRouter(Users);
+  const SingleBlogViewYesHistory = withRouter(SingleBlogView);
+
 
   const AppView = () => (
     <div>
@@ -101,13 +84,15 @@ const App = ({
         <p>{user.name} logged in
           <button onClick={handleLogout} type="button">logout</button>
         </p>
-        <Route exact path="/" render={() => <NewBlogForm />} />
-        <Route exact path="/" render={() => <Blogs />} />
-        <Route exact path="/users/:id?" render={({ match }) => <UsersYesHistory id={match.params.id} />} />
+        <Switch>
+          <Route exact path="/" render={() => <div><NewBlogForm /><Blogs /></div>} />
+          <Route exact path="/users/:id?" render={({ match }) => <Users id={match.params.id} />} />
+          <Route exact path="/blogs/:id" render={({ match }) => <SingleBlogViewYesHistory id={match.params.id} />} />
+          <Route path="/" render={() => (<div>404 Page not found</div>)} />
+        </Switch>
       </Router>
     </div>
   );
-
 
   /* eslint-disable react/jsx-props-no-spreading */
   const LoginForm = () => (
@@ -139,10 +124,7 @@ const App = ({
 };
 
 const dispatchToProps = {
-  rmvBlgFromUsr: removeBlogFromUser,
   initBlogs: initializeBlogs,
-  updateBlg: updateBlog,
-  deleteBlg: deleteBlog,
   notif: notify,
   setUsr: setUser,
   initUsers: initializeUsers,
