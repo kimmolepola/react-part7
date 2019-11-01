@@ -5,15 +5,25 @@ import {
 } from '../reducers/blogsReducer';
 import { removeBlogFromUser } from '../reducers/usersReducer';
 import { notify } from '../reducers/notificationReducer';
+import { useField } from '../hooks';
+import { addComment } from '../reducers/commentsReducer';
 
 /* eslint-disable react/prop-types */
 const SingleBlogView = ({
-  blog, user, updBlg, delBlg, rmvBlgFromUser, notif, history,
+  blog, user, updBlg, delBlg, rmvBlgFromUser, notif, history, addCmmnt, comments,
 }) => {
-  const handleBlogDelete = async (id, title, author, blogUserId) => {
-    if (window.confirm(`remove blog ${title} by ${author}`)) { // eslint-disable-line no-alert
-      if (await delBlg(id)) {
-        rmvBlgFromUser(id, blogUserId);
+  const { reset: commentreset, ...comment } = useField('text', 'Comment');
+
+  const handleComment = async (event) => {
+    event.preventDefault();
+    addCmmnt(blog.id, comment.value);
+    commentreset();
+  };
+
+  const handleBlogDelete = async () => {
+    if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) { // eslint-disable-line no-alert
+      if (await delBlg(blog.id)) {
+        rmvBlgFromUser(blog.id, blog.user.id);
         history.push('/');
       } else {
         notif('failed to delete', 'error');
@@ -37,13 +47,34 @@ const SingleBlogView = ({
     backgroundColor: 'lightblue',
   };
 
+  const ThisBlogComments = () => {
+    if (comments && blog) {
+      return comments.reduce((result, x) => {
+        if (x.blogId === blog.id) {
+          result.push(<li key={x.id}>{x.comment}</li>);
+        }
+        return result;
+      }, []);
+    }
+    return null;
+  };
+
+  /* eslint-disable react/jsx-props-no-spreading */
   return (blog && user ? (
     <div>
       <h2>{blog.title} {blog.author}</h2>
       <a href={blog.url}>{blog.url}</a><br />
       {blog.likes}<button type="button" onClick={() => handleLike()}>like</button> <br />
       added by {blog.user.name}
-      <button style={showWhenSameUser} type="button" onClick={() => handleBlogDelete(blog.id, blog.title, blog.author, blog.user.id)}>remove</button>
+      <button style={showWhenSameUser} type="button" onClick={() => handleBlogDelete()}>remove</button>
+      <h3>comments</h3>
+      <form onSubmit={handleComment}>
+        <input {...comment} />
+        <button type="submit">add comment</button>
+      </form>
+      <ul>
+        <ThisBlogComments />
+      </ul>
     </div>
   ) : (<div>404 Page not found</div>));
 };
@@ -51,6 +82,7 @@ const SingleBlogView = ({
 const mapStateToProps = (state, props) => {
   const blog = state.blogs.find((x) => x.id === props.id);
   return {
+    comments: state.comments,
     blog,
     user: state.user,
     blogs: state.blogs,
@@ -58,6 +90,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
+  addCmmnt: addComment,
   delBlg: deleteBlog,
   updBlg: updateBlog,
   rmvBlgFromUser: removeBlogFromUser,

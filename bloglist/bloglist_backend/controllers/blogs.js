@@ -1,7 +1,24 @@
 const jwt = require('jsonwebtoken');
 const blogsRouter = require('express').Router();
+const Comment = require('../models/comment');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+
+
+blogsRouter.get('/comments', async (request, response) => {
+  const comments = await Comment.find({});
+  response.json(comments);
+});
+
+blogsRouter.post('/:id/comments', async (request, response, next) => {
+  try {
+    const comment = new Comment({ blogId: request.params.id, comment: request.body.comment });
+    const resp = await comment.save();
+    response.status(201).json(resp.toJSON());
+  } catch (exception) {
+    next(exception);
+  }
+});
 
 blogsRouter.put('/:id', async (request, response, next) => {
   try {
@@ -50,16 +67,16 @@ blogsRouter.post('/', async (request, response, next) => {
     }
     const user = await User.findById(decodedToken.id);
 
+    /* eslint-disable no-underscore-dangle */
     const blog = new Blog({
       title: body.title,
       author: body.author,
       url: body.url,
       likes: body.likes,
-      user: user._id, // eslint-disable-line no-underscore-dangle
+      user: user._id,
     });
 
     const savedBlog = await blog.save();
-    // eslint-disable-next-line no-underscore-dangle
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
     response.status(201).json(savedBlog.toJSON());

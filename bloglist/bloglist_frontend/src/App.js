@@ -16,14 +16,16 @@ import { setUser } from './reducers/userReducer';
 import Users from './components/Users';
 import { initializeUsers } from './reducers/usersReducer';
 import SingleBlogView from './components/SingleBlogView';
+import { initializeComments } from './reducers/commentsReducer';
 
 /* eslint-disable react/prop-types */
 const App = ({
-  blogs, user, notif, setUsr, initBlogs, initUsers,
+  blogs, user, notif, setUsr, initBlogs, initUsers, initComments,
 }) => {
   const { reset: usernamereset, ...username } = useField('text', 'Username');
   const { reset: passwordreset, ...password } = useField('password', 'Password');
 
+  useEffect(() => { initComments(); }, [initComments]);
   useEffect(() => { initBlogs(); }, [initBlogs]);
   useEffect(() => { initUsers(); }, [initUsers]);
 
@@ -77,13 +79,14 @@ const App = ({
   const AppView = () => (
     <div>
       <Router>
-        <Link style={padding} to="/">home</Link>
-        <Link style={padding} to="/users">users</Link>
+        <div style={{ backgroundColor: 'lightGrey', padding: '5px' }}>
+          <Link style={padding} to="/">home</Link>
+          <Link style={padding} to="/users">users</Link>
+          <span style={{ paddingRight: '5px' }}>{user.name} logged in</span>
+          <button onClick={handleLogout} type="button">logout</button>
+        </div>
         <h2>blogs</h2>
         <Notification />
-        <p>{user.name} logged in
-          <button onClick={handleLogout} type="button">logout</button>
-        </p>
         <Switch>
           <Route exact path="/" render={() => <div><NewBlogForm /><Blogs /></div>} />
           <Route exact path="/users/:id?" render={({ match }) => <Users id={match.params.id} />} />
@@ -124,6 +127,7 @@ const App = ({
 };
 
 const dispatchToProps = {
+  initComments: initializeComments,
   initBlogs: initializeBlogs,
   notif: notify,
   setUsr: setUser,

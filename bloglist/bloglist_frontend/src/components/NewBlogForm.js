@@ -29,6 +29,7 @@ const NewBlogForm = ({
       const rsp = { ...response };
       rsp.user = _.omit(users.find((x) => x.id.toString() === response.user.toString()), 'blogs');
       addBlgForUsr(_.omit(rsp, 'user', 'likes'), response.user);
+      rsp.comments = { id: rsp.comments, content: [] };
       addBlg(rsp);
       urlreset();
       authorreset();
