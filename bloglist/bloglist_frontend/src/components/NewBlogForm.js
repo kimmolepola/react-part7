@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { Form, Button } from 'semantic-ui-react';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
 import { useField } from '../hooks';
@@ -41,29 +42,33 @@ const NewBlogForm = ({
   };
   /* eslint-disable react/jsx-props-no-spreading */
   return (
-    <div>
-      <Togglable buttonLabel="new blog" ref={noteFormRef}>
-        <h2>create new</h2>
-        <form onSubmit={handleCreateNewBlog}>
-          <div>
+    <Togglable buttonLabel="new blog" ref={noteFormRef}>
+      <h2>create new</h2>
+      <Form onSubmit={handleCreateNewBlog}>
+        <Form.Field>
             title:
+          <Form.Group inline>
             <input {...title} />
-            <button type="button" onClick={() => titlereset()}>reset</button>
-          </div>
-          <div>
+            <Button type="button" onClick={() => titlereset()}>reset</Button>
+          </Form.Group>
+        </Form.Field>
+        <Form.Field>
             author:
+          <Form.Group inline>
             <input {...author} />
-            <button type="button" onClick={() => authorreset()}>reset</button>
-          </div>
-          <div>
+            <Button type="button" onClick={() => authorreset()}>reset</Button>
+          </Form.Group>
+        </Form.Field>
+        <Form.Field>
             url:
+          <Form.Group inline>
             <input {...url} />
-            <button type="button" onClick={() => urlreset()}>reset</button>
-          </div>
-          <button type="submit">create</button>
-        </form>
-      </Togglable>
-    </div>
+            <Button type="button" onClick={() => urlreset()}>reset</Button>
+          </Form.Group>
+        </Form.Field>
+        <Button color="grey" type="submit">create</Button>
+      </Form>
+    </Togglable>
   );
 };
 /* eslint-enable react/jsx-props-no-spreading, react/prop-types */

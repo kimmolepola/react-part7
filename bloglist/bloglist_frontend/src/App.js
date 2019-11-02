@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import {
   BrowserRouter as Router, Route, Link, Switch, withRouter,
 } from 'react-router-dom';
+import {
+  Container, Menu, Button, Table, Form,
+} from 'semantic-ui-react';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import Notification from './components/Notification';
 import NewBlogForm from './components/NewBlogForm';
-import Blog from './components/Blog';
 import './App.css';
 import { useField } from './hooks';
 import { initializeBlogs } from './reducers/blogsReducer';
@@ -62,30 +64,30 @@ const App = ({
   };
 
   const Blogs = () => (
-    blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
-      <Blog
-        key={blog.id}
-        blog={blog}
-      />
-    )));
-
-  const padding = {
-    padding: 5,
-  };
+    <Table striped celled>
+      <Table.Body>
+        {blogs.sort((a, b) => b.likes - a.likes).map((blog) => (
+          <Table.Row key={blog.id}>
+            <Table.Cell>
+              <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+            </Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  );
 
   const SingleBlogViewYesHistory = withRouter(SingleBlogView);
-
 
   const AppView = () => (
     <div>
       <Router>
-        <div style={{ backgroundColor: 'lightGrey', padding: '5px' }}>
-          <Link style={padding} to="/">home</Link>
-          <Link style={padding} to="/users">users</Link>
-          <span style={{ paddingRight: '5px' }}>{user.name} logged in</span>
-          <button onClick={handleLogout} type="button">logout</button>
-        </div>
-        <h2>blogs</h2>
+        <Menu>
+          <Menu.Item link><Link to="/">home</Link></Menu.Item>
+          <Menu.Item link><Link to="/users">users</Link></Menu.Item>
+          <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Button onClick={handleLogout} type="button">logout</Button></Menu.Item>
+        </Menu>
+        <h2>blog app</h2>
         <Notification />
         <Switch>
           <Route exact path="/" render={() => <div><NewBlogForm /><Blogs /></div>} />
@@ -102,7 +104,7 @@ const App = ({
     <div>
       <h2>Log in to application</h2>
       <Notification />
-      <form onSubmit={handleLogin}>
+      <Form onSubmit={handleLogin}>
         <div>
             username
           <input {...username} />
@@ -111,18 +113,18 @@ const App = ({
             password
           <input {...password} />
         </div>
-        <button type="submit">Login</button>
-      </form>
+        <Button type="submit">Login</Button>
+      </Form>
     </div>
   );
   /* eslint-enable react/jsx-props-no-spreading */
   /* eslint-disable react/jsx-first-prop-new-line, react/jsx-max-props-per-line */
 
   return (
-    <div>
+    <Container>
       {user === null && LoginForm()}
       {user !== null && AppView()}
-    </div>
+    </Container>
   );
 };
 
