@@ -6,9 +6,11 @@ const config = {
         entry: ['@babel/polyfill', '../bloglist/bloglist_frontend/src/index.js'],
         output: {
             path: path.resolve(__dirname, 'build'),
-            filename: 'main.js'
+            filename: 'main.js',
+            publicPath: '/'
         },
         devServer: {
+            historyApiFallback: true,
             contentBase: path.resolve(__dirname, 'build'),
             compress: true,
             port: 3000,
