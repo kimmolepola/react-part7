@@ -16,9 +16,8 @@ const config = {
             port: 3000,
             proxy: {
                 '/api/': {
-                  target: 'http://localhost:3003',
+                  target: 'https://tranquil-bayou-44537.herokuapp.com/:3003',
                   changeOrigin : true,
-                  secure: false
                 }
             }
         },
