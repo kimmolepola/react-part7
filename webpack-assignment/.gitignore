@@ -9,8 +9,6 @@
 /coverage
 
 # production
-main.js
-main.js.map
 
 # misc
 .DS_Store
