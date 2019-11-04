@@ -2,6 +2,9 @@
   "name": "bloglist_frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "10.15.3"
+},
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "@testing-library/dom": "^6.6.0",
