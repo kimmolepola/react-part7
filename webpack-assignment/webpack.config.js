@@ -16,7 +16,7 @@ const config = {
             port: 3000,
             proxy: {
                 '/api/': {
-                  target: 'https://tranquil-bayou-44537.herokuapp.com/:3003',
+                  target: 'https://tranquil-bayou-44537.herokuapp.com:3003',
                   changeOrigin : true,
                 }
             }
