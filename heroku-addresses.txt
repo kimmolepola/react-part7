@@ -1,0 +1,2 @@
+frontend: https://evening-headland-37943.herokuapp.com
+backend: https://tranquil-bayou-44537.herokuapp.com

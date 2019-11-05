@@ -1,9 +1,13 @@
 const path = require('path');
-const webpack = require('webpack');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const webpack = require('webpack')
 
-const config = {
+const config = (env, argv) => {
 
+    const backend_url = argv.mode === 'production'
+    ? 'https://tranquil-bayou-44537.herokuapp.com'
+    : 'http://localhost:3003'
+
+    return {
         entry: ['@babel/polyfill', '../bloglist/bloglist_frontend/src/index.js'],
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -39,9 +43,12 @@ const config = {
             ]
         },
         plugins: [
-            new CaseSensitivePathsPlugin()
+            new webpack.DefinePlugin({
+                'process.env.REACT_APP_BACKEND': JSON.stringify(backend_url)
+            })
         ]
     }
+}
 
 module.exports = config
        

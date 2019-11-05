@@ -4,7 +4,7 @@
     "description": "webpack configuration from scratch for bloglist application",
     "scripts": {
         "build": "webpack --mode=production",
-        "start": "webpack-dev-server --mode=production"
+        "start": "webpack-dev-server --mode=development"
     },
     "license": "MIT",
     "devDependencies": {
