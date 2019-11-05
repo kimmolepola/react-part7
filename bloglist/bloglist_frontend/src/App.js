@@ -84,7 +84,7 @@ const App = ({
     <div>
       <Router>
         <Menu>
-          <Menu.Item link><Link to="/">home {process.env.REACT_APP_BACKEND}</Link></Menu.Item>
+          <Menu.Item link><Link to="/">home</Link></Menu.Item>
           <Menu.Item link><Link to="/users">users</Link></Menu.Item>
           <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Button onClick={handleLogout} type="button">logout</Button></Menu.Item>
         </Menu>
