@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = `https://tranquil-bayou-44537.herokuapp.com/api/blogs`;
+const baseUrl = `${process.env.REACT_APP_BACKEND}/api/blogs`;
 
 let config;
 
