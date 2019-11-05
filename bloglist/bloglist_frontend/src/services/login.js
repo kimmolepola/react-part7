@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = '/api/login';
+const baseUrl = 'https://tranquil-bayou-44537.herokuapp.com/api/login';
 
 const login = async (credentials) => {
   try{

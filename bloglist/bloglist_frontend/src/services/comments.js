@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = '/api/blogs';
+const baseUrl = 'https://tranquil-bayou-44537.herokuapp.com/api/blogs';
 
 const getAll = async () => {
   const response = await axios.get(`${baseUrl}/comments`);
