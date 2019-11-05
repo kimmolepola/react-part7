@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = `${process.env.BACKEND}/api/blogs`;
+const baseUrl = `${process.env.REACT_APP_BACKEND}/api/blogs`;
 
 let config;
 
