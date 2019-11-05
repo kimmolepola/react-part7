@@ -22,7 +22,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology
   });
 
 app.use(cors());
-app.use(function (req, res, next) {
+/* app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
   res.setHeader('Access-Control-Allow-Origin', 'https://evening-headland-37943.herokuapp.com');
@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
 
   // Pass to next layer of middleware
   next();
-});
+}); */
 app.use(express.static('build'));
 app.use(bodyParser.json());
 app.use(middleware.requestLogger);
