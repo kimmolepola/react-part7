@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://tranquil-bayou-44537.herokuapp.com/api/blogs';
+const baseUrl = '/api/blogs';
 
 let config;
 
