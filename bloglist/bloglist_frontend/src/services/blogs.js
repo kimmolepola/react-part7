@@ -26,7 +26,7 @@ const create = async (content) => {
 };
 
 const getAll = async () => {
-  const response = await axios.get(baseUrl);
+  const response = await axios.get(baseUrl, {mode: "no-cors"});
   return response.data;
 };
 
