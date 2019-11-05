@@ -86,7 +86,7 @@ const App = ({
         <Menu>
           <Menu.Item link><Link to="/">home</Link></Menu.Item>
           <Menu.Item link><Link to="/users">users</Link></Menu.Item>
-          <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Button onClick={handleLogout} type="button">logout</Button></Menu.Item>
+          <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Link to="/"><Button onClick={handleLogout} type="button">logout</Button></Link></Menu.Item>
         </Menu>
         <h2>blog app</h2>
         <Notification />
