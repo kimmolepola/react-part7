@@ -21,7 +21,7 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology
     console.log('error connecting to MongoDB:', error.message);
   });
 
-app.use(cors());
+//app.use(cors());
 /* app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
