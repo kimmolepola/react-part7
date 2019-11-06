@@ -8,7 +8,7 @@ const config = (env, argv) => {
     : 'http://localhost:3003'
 
     return {
-        entry: ['@babel/polyfill', '../bloglist/bloglist_frontend/src/index.js'],
+        entry: ['@babel/polyfill', '../../bloglist/bloglist_frontend/src/index.js'],
         output: {
             path: path.resolve(__dirname, 'build'),
             filename: 'main.js',

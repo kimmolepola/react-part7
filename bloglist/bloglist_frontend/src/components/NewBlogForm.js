@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
+import { omit } from 'lodash';
 import { Form, Button } from 'semantic-ui-react';
 import blogService from '../services/blogs';
 import Togglable from './Togglable';
@@ -28,8 +28,8 @@ const NewBlogForm = ({
         title: title.value, author: author.value, url: quickFixUrl,
       });
       const rsp = { ...response };
-      rsp.user = _.omit(users.find((x) => x.id.toString() === response.user.toString()), 'blogs');
-      addBlgForUsr(_.omit(rsp, 'user', 'likes'), response.user);
+      rsp.user = omit(users.find((x) => x.id.toString() === response.user.toString()), 'blogs');
+      addBlgForUsr(omit(rsp, 'user', 'likes'), response.user);
       rsp.comments = { id: rsp.comments, content: [] };
       addBlg(rsp);
       urlreset();
