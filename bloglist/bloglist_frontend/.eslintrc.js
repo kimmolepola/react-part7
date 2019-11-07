@@ -4,6 +4,7 @@ module.exports = {
     commonjs: true,
     es6: true,
     'jest/globals': true,
+    "cypress/globals": true,
   },
   extends: [
     'airbnb',
@@ -22,7 +23,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'react', 'jest',
+    'react', 'jest', 'cypress'
   ],
   rules: {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

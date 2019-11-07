@@ -64,13 +64,13 @@ const SingleBlogView = ({
     <div>
       <h2>{blog.title} {blog.author}</h2>
       <a href={blog.url}>{blog.url}</a><br />
-      {blog.likes}<button type="button" onClick={() => handleLike()}>like</button> <br />
+      {blog.likes}<button data-cy="blog-like-button" type="button" onClick={() => handleLike()}>like</button> <br />
       added by {blog.user.name}
-      <button style={showWhenSameUser} type="button" onClick={() => handleBlogDelete()}>remove</button>
+      <button data-cy="blog-remove-button" style={showWhenSameUser} type="button" onClick={() => handleBlogDelete()}>remove</button>
       <h3>comments</h3>
       <form onSubmit={handleComment}>
         <input {...comment} />
-        <button type="submit">add comment</button>
+        <button data-cy="blog-add-comment-button" type="submit">add comment</button>
       </form>
       <ul>
         <ThisBlogComments />

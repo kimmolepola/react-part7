@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /* eslint-disable import/prefer-default-export */
-export const useField = (type, name) => {
+export const useField = (type, name, datacy) => {
   const [value, setValue] = useState('');
 
   const onChange = (event) => {
@@ -13,6 +13,7 @@ export const useField = (type, name) => {
   };
 
   return {
+    datacy,
     type,
     value,
     onChange,

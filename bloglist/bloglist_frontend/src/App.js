@@ -86,7 +86,7 @@ const App = ({
         <Menu>
           <Menu.Item link><Link to="/">home</Link></Menu.Item>
           <Menu.Item link><Link to="/users">users</Link></Menu.Item>
-          <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Link to="/"><Button onClick={handleLogout} type="button">logout</Button></Link></Menu.Item>
+          <Menu.Item><span style={{ paddingRight: '5px' }}>{user.name} logged in</span><Link to="/"><Button data-cy="logout-button" onClick={handleLogout} type="button">logout</Button></Link></Menu.Item>
         </Menu>
         <h2>blog app</h2>
         <Notification />
@@ -108,13 +108,13 @@ const App = ({
       <Form onSubmit={handleLogin}>
         <div>
             username
-          <input {...username} />
+          <input data-cy="login-username" {...username} />
         </div>
         <div>
             password
-          <input {...password} />
+          <input data-cy="login-password" {...password} />
         </div>
-        <Button type="submit">Login</Button>
+        <Button data-cy="login-submit" type="submit">Login</Button>
       </Form>
     </div>
   );

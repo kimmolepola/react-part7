@@ -13,9 +13,9 @@ import { addBlogForUser } from '../reducers/usersReducer';
 const NewBlogForm = ({
   notif, users, addBlgForUsr, addBlg,
 }) => {
-  const { reset: urlreset, ...url } = useField('text', 'Url');
-  const { reset: authorreset, ...author } = useField('text', 'Author');
-  const { reset: titlereset, ...title } = useField('text', 'Title');
+  const { reset: urlreset, ...url } = useField('text', 'Url', 'create-new-blog-url-input');
+  const { reset: authorreset, ...author } = useField('text', 'Author', 'create-new-blog-author-input');
+  const { reset: titlereset, ...title } = useField('text', 'Title', 'create-new-blog-title-input');
 
   const noteFormRef = React.createRef();
 
@@ -42,7 +42,7 @@ const NewBlogForm = ({
   };
   /* eslint-disable react/jsx-props-no-spreading */
   return (
-    <Togglable buttonLabel="new blog" ref={noteFormRef}>
+    <Togglable buttonLabel="new blog" data_cy="create-new-blog-button" ref={noteFormRef}>
       <h2>create new</h2>
       <Form onSubmit={handleCreateNewBlog}>
         <Form.Field>
@@ -66,7 +66,7 @@ const NewBlogForm = ({
             <Button type="button" onClick={() => urlreset()}>reset</Button>
           </Form.Group>
         </Form.Field>
-        <Button color="grey" type="submit">create</Button>
+        <Button data-cy="create-new-blog-submit" color="grey" type="submit">create</Button>
       </Form>
     </Togglable>
   );
